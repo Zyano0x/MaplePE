@@ -21,18 +21,33 @@
 
 #pragma region lib
 #include "Common.h"
-
-#ifdef _DEBUG
-#pragma comment(lib, "CommonD.lib")
+#ifdef _WIN64
+	#ifdef _DEBUG
+		#pragma comment(lib, "CommonD64.lib")
+	#else
+		#pragma comment(lib, "Common64.lib")
+	#endif
 #else
-#pragma comment(lib, "Common.lib")
+	#ifdef _DEBUG
+		#pragma comment(lib, "CommonD.lib")
+	#else
+		#pragma comment(lib, "Common.lib")
+	#endif
 #endif
 
 #include "GridCtrl.h"
-#ifdef _DEBUG
-#pragma comment(lib, "GridCtrlD.lib")
+#ifdef _WIN64
+	#ifdef _DEBUG
+		#pragma comment(lib, "GridCtrlD64.lib")
+	#else
+		#pragma comment(lib, "GridCtrl64.lib")
+	#endif
 #else
-#pragma comment(lib, "GridCtrl.lib")
+	#ifdef _DEBUG
+		#pragma comment(lib, "GridCtrlD.lib")
+	#else
+		#pragma comment(lib, "GridCtrl.lib")
+	#endif
 #endif
 
 #pragma endregion

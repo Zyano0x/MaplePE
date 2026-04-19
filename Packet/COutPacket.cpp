@@ -28,12 +28,12 @@ namespace COutPacket {
 				tempSet.insert(opcode);
 			}
 			catch (const std::exception&) {
-				DEBUGW(L"Unknown filter opcodes")
+				DEBUG(L"Unknown filter opcodes")
 			}
 		}
 
 		if (tempSet.empty()) {
-			DEBUGW(L"Failed to update COutPacketFilterOpcodeSet: no valid opcodes found");
+			DEBUG(L"Failed to update COutPacketFilterOpcodeSet: no valid opcodes found");
 			return;
 		}
 
@@ -63,10 +63,11 @@ namespace COutPacket {
 		gActionsMap[key] = actions;
 	}
 
+
 	void(__thiscall* Encode1)(void* ecx, uint8_t n) = nullptr;
-	void __fastcall Encode1_Hook(void* ecx, void* edx, uint8_t n) {
+	void __fastcall Encode1_Hook(void* ecx, FASTCALL_EDX_PADDING uint8_t n) {
 		// COutPacket::COutPacket(opcodeIs1Byte)
-		auto action = PacketAction{ PacketActionType::Encode1,1,(uint32_t)_ReturnAddress() };
+		auto action = PacketAction{ PacketActionType::Encode1,1,(ULONG_PTR)_ReturnAddress() };
 		auto actions = GetActions(ecx);
 		if (actions == nullptr) {
 			if (IsFilterOpcode(n)) {
@@ -83,9 +84,9 @@ namespace COutPacket {
 	}
 
 	void(__thiscall* Encode2)(void* ecx, uint16_t n) = nullptr;
-	void __fastcall Encode2_Hook(void* ecx, void* edx, uint16_t n) {
+	void __fastcall Encode2_Hook(void* ecx, FASTCALL_EDX_PADDING uint16_t n) {
 		// COutPacket::COutPacket(opcode)
-		auto action = PacketAction{ PacketActionType::Encode2,2,(uint32_t)_ReturnAddress() };
+		auto action = PacketAction{ PacketActionType::Encode2,2,(ULONG_PTR)_ReturnAddress() };
 		auto actions = GetActions(ecx);
 		if (actions == nullptr) {
 			if (IsFilterOpcode(n)) {
@@ -102,51 +103,51 @@ namespace COutPacket {
 	}
 
 	void(__thiscall* Encode4)(void* ecx, uint32_t n) = nullptr;
-	void __fastcall Encode4_Hook(void* ecx, void* edx, uint32_t n) {
+	void __fastcall Encode4_Hook(void* ecx, FASTCALL_EDX_PADDING uint32_t n) {
 		if (IsPayload(ecx)) {
 			auto actions = GetActions(ecx);
 			if (actions != nullptr && !actions->empty()) {
-				actions->push_back(PacketAction{ PacketActionType::Encode4,4,(uint32_t)_ReturnAddress() });
+				actions->push_back(PacketAction{ PacketActionType::Encode4,4,(ULONG_PTR)_ReturnAddress() });
 			}
 		}
 		return Encode4(ecx, n);
 	}
 
 	void(__thiscall* Encode8)(void* ecx, uint64_t n) = nullptr;
-	void __fastcall Encode8_Hook(void* ecx, void* edx, uint64_t n) {
+	void __fastcall Encode8_Hook(void* ecx, FASTCALL_EDX_PADDING uint64_t n) {
 		if (IsPayload(ecx)) {
 			auto actions = GetActions(ecx);
 			if (actions != nullptr && !actions->empty()) {
-				actions->push_back(PacketAction{ PacketActionType::Encode8,8,(uint32_t)_ReturnAddress() });
+				actions->push_back(PacketAction{ PacketActionType::Encode8,8,(ULONG_PTR)_ReturnAddress() });
 			}
 		}
 		return Encode8(ecx, n);
 	}
 
 	void(__thiscall* EncodeStr)(void* ecx, char* s) = nullptr;
-	void __fastcall EncodeStr_Hook(void* ecx, void* edx, char* s) {
+	void __fastcall EncodeStr_Hook(void* ecx, FASTCALL_EDX_PADDING char* s) {
 		if (IsPayload(ecx)) {
 			auto actions = GetActions(ecx);
 			if (actions != nullptr && !actions->empty()) {
-				actions->push_back(PacketAction{ PacketActionType::EncodeStr,0,(uint32_t)_ReturnAddress() });
+				actions->push_back(PacketAction{ PacketActionType::EncodeStr,0,(ULONG_PTR)_ReturnAddress() });
 			}
 		}
 		return EncodeStr(ecx, s);
 	}
 
 	void(__thiscall* EncodeBuffer)(void* ecx, uint8_t* p, uint32_t uSize) = nullptr;
-	void __fastcall EncodeBuffer_Hook(void* ecx, void* edx, uint8_t* p, uint32_t uSize) {
+	void __fastcall EncodeBuffer_Hook(void* ecx, FASTCALL_EDX_PADDING uint8_t* p, uint32_t uSize) {
 		if (IsPayload(ecx)) {
 			auto actions = GetActions(ecx);
 			if (actions != nullptr && !actions->empty()) {
-				actions->push_back(PacketAction{ PacketActionType::EncodeBuffer,uSize,(uint32_t)_ReturnAddress() });
+				actions->push_back(PacketAction{ PacketActionType::EncodeBuffer,uSize,(ULONG_PTR)_ReturnAddress() });
 			}
 		}
 		return EncodeBuffer(ecx, p, uSize);
 	}
 
 	void(__thiscall* MakeBufferList)(void* ecx, void* l, uint16_t uSeqBase, uint32_t* puSeqKey, int bEnc, uint32_t dwKey) = nullptr;
-	void __fastcall MakeBufferList_Hook(void* ecx, void* edx, void* l, uint16_t uSeqBase, uint32_t* puSeqKey, int bEnc, uint32_t dwKey) {
+	void __fastcall MakeBufferList_Hook(void* ecx, FASTCALL_EDX_PADDING  void* l, uint16_t uSeqBase, uint32_t* puSeqKey, int bEnc, uint32_t dwKey) {
 		auto actions = GetActions(ecx);
 		if (actions != nullptr && !actions->empty()) {
 			OutPacket* oPacket = static_cast<OutPacket*>(ecx);
@@ -161,5 +162,4 @@ namespace COutPacket {
 		DeleteActions(ecx);
 		return MakeBufferList(ecx, l, uSeqBase, puSeqKey, bEnc, dwKey);
 	}
-
 }

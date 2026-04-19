@@ -24,7 +24,7 @@ void GUIClient::Ping(uint32_t pid)
 			PacketScript::Encode4(buffer, pid);
 			bool ok = this->SendBuffer(buffer.data(), buffer.size());
 			if (!ok) {
-				DEBUGW(L"Failed to ping");
+				DEBUG(L"Failed to ping");
 			}
 			std::this_thread::sleep_for(std::chrono::seconds(10));
 		}
@@ -38,7 +38,7 @@ void GUIClient::SendPacketInfo(PacketInfo& info)
 	info.Serialize(buffer);
 	bool ok = this->SendBuffer(buffer.data(), buffer.size());
 	if (!ok) {
-		DEBUGW(L"Failed to send packet info");
+		DEBUG(L"Failed to send packet info");
 		return;
 	}
 }
@@ -67,12 +67,12 @@ void GUIClient::HandleDatagram(const void* buf, size_t bufLen, const std::string
 			break;
 		}
 		default:
-			DEBUGW(L"Unknown opcode received " + std::to_wstring(static_cast<uint16_t>(op)));
+			DEBUG(L"Unknown opcode received " + std::to_wstring(static_cast<uint16_t>(op)));
 			break;
 		}
 	}
 	else {
-		DEBUGW(L"Invaild udp packet size");
+		DEBUG(L"Invaild udp packet size");
 	}
 
 }
@@ -91,14 +91,25 @@ void GUIClient::handlePacketInfo(PacketInfo& info)
 		delete[] iPacket.m_aRecvBuff;
 	}
 	else {
+#ifdef _WIN64
+		OutPacket oPacket{};
+		oPacket.m_uMaxBufferSize = 0x100;
+		oPacket.m_uHeader = static_cast<uint16_t>(info.Payload[0] | info.Payload[1] << 8);
+		oPacket.m_uOffset = static_cast<uint32_t>(info.Payload.size());
+		memcpy(oPacket.m_aSendBuff, info.Payload.data(), info.Payload.size());
+		COutPacket::SetActions(&oPacket, info.Actions);
+		Router::SendPacket(&oPacket);
+#else
 		OutPacket oPacket{};
 		oPacket.m_aSendBuff = new uint8_t[info.Payload.size()];
-		oPacket.m_uOffset = info.Payload.size();
+		oPacket.m_uOffset = static_cast<uint32_t>(info.Payload.size());
 		memcpy(oPacket.m_aSendBuff, info.Payload.data(), info.Payload.size());
 		COutPacket::SetActions(&oPacket, info.Actions);
 		Router::SendPacket(&oPacket);
 		delete[] oPacket.m_aSendBuff;
+#endif
 	}
+
 }
 void GUIClient::handleFilterOpcodesSet(FilterOpcodeSet& set)
 {

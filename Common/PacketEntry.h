@@ -7,6 +7,7 @@ enum PacketActionType {
 	Decode2,
 	Decode4,
 	Decode8,
+	Skip8,
 	DecodeStr,
 	DecodeBuffer,
 	Encode1,
@@ -19,8 +20,8 @@ enum PacketActionType {
 
 struct PacketAction {
 	PacketActionType Type;
-	uint32_t Size;
-	uint32_t RetAddr;
+	size_t Size;
+	ULONG_PTR RetAddr;
 };
 
 struct PacketInfo {
@@ -34,13 +35,13 @@ struct PacketInfo {
 		PacketScript::Encode4(buffer, PID);
 		PacketScript::Encode4(buffer, Index);
 		PacketScript::Encode1(buffer, IsInPacket);
-		PacketScript::Encode4(buffer, Payload.size());
+		PacketScript::Encode4(buffer, static_cast<uint32_t>(Payload.size()));
 		buffer.insert(buffer.end(), Payload.begin(), Payload.end());
-		PacketScript::Encode4(buffer, Actions.size());
+		PacketScript::Encode4(buffer, static_cast<uint32_t>(Actions.size()));
 		for (const PacketAction& action : Actions) {
-			PacketScript::Encode1(buffer, uint8_t(action.Type));
-			PacketScript::Encode4(buffer, action.Size);
-			PacketScript::Encode4(buffer, action.RetAddr);
+			PacketScript::Encode1(buffer, static_cast<uint8_t>(action.Type));
+			PacketScript::Encode4(buffer, static_cast<uint32_t>(action.Size));
+			PacketScript::Encode8(buffer, static_cast<uint64_t>(action.RetAddr));
 		}
 	}
 
@@ -57,7 +58,7 @@ struct PacketInfo {
 			PacketAction action{
 				PacketActionType(PacketScript::Decode1(buffer,pos)),
 				PacketScript::Decode4(buffer, pos),
-				PacketScript::Decode4(buffer, pos),
+				static_cast<ULONG_PTR>(PacketScript::Decode8(buffer, pos)),
 			};
 			Actions.push_back(action);
 		}

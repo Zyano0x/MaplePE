@@ -11,6 +11,7 @@ namespace {
 		{ PacketActionType::Decode2, L"Decode2" },
 		{ PacketActionType::Decode4, L"Decode4" },
 		{ PacketActionType::Decode8, L"Decode8" },
+		{ PacketActionType::Skip8, L"Skip8" },
 		{ PacketActionType::DecodeStr, L"DecodeStr" },
 		{ PacketActionType::DecodeBuffer, L"DecodeBuffer" },
 		{ PacketActionType::Encode1, L"Encode1" },
@@ -54,7 +55,7 @@ void FormatController::initPacketFormatModels()
 	// Get actions
 	const std::vector<PacketAction> actions = log.GetActions();
 	// Set item
-	size_t valuePos = 0, segmentPos = 0;
+	size_t valuePos = 0, segmentPos = 0, outLen = 0;
 	for (size_t i = 0; i < actions.size(); i++)
 	{
 		PacketAction action = actions[i];
@@ -77,14 +78,16 @@ void FormatController::initPacketFormatModels()
 			segment = PacketScript::GetHexSegment(data, segmentPos, 4);
 			break;
 		case PacketActionType::Decode8:
+		case PacketActionType::Skip8:
 		case PacketActionType::Encode8:
 			value = std::to_wstring(PacketScript::Decode8(buffer, valuePos));
 			segment = PacketScript::GetHexSegment(data, segmentPos, 8);
 			break;
 		case PacketActionType::DecodeStr:
 		case PacketActionType::EncodeStr:
-			value = PacketScript::DecodeStr(buffer, valuePos, action.Size);
-			segment = PacketScript::GetHexSegment(data, segmentPos, 2 + action.Size);
+			value = PacketScript::DecodeStr(buffer, valuePos, outLen);
+			segment = PacketScript::GetHexSegment(data, segmentPos, 2 + outLen);
+			action.Size = static_cast<uint32_t>(outLen);
 			break;
 		case PacketActionType::DecodeBuffer:
 		case PacketActionType::EncodeBuffer:
@@ -141,6 +144,7 @@ bool FormatController::EncodeValue(int row, const std::wstring& text, std::wstri
 		break;
 	}
 	case PacketActionType::Decode8:
+	case PacketActionType::Skip8:
 	case PacketActionType::Encode8: {
 		uint64_t value = static_cast<uint64_t>(std::stoi(text));
 		PacketScript::Encode8(buffer, value);
@@ -198,6 +202,7 @@ bool FormatController::DecodeSegment(int row, const std::wstring& text, std::wst
 		break;
 	}
 	case PacketActionType::Decode8:
+	case PacketActionType::Skip8:
 	case PacketActionType::Encode8: {
 		value = std::to_wstring((int64_t)PacketScript::Decode8(buffer, pos));
 		break;
@@ -274,6 +279,15 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 		case Decode8: {
 			wchar_t code[256];
 			swprintf_s(code, s.CInPacketDecode8GenCode.c_str(), index);
+			line = code;
+			if (!comment.empty()) {
+				line += kCommentSymbol + comment;
+			}
+			break;
+		}
+		case Skip8: {
+			wchar_t code[256];
+			swprintf_s(code, s.CInPacketSkip8GenCode.c_str(), index);
 			line = code;
 			if (!comment.empty()) {
 				line += kCommentSymbol + comment;

@@ -24,7 +24,6 @@
     <ClInclude Include="PacketEntry.h" />
     <ClInclude Include="PacketScript.h" />
     <ClInclude Include="Setting.h" />
-    <ClInclude Include="Tool.h" />
     <ClInclude Include="UDPClient.h" />
     <ClInclude Include="UDPServer.h" />
     <ClInclude Include="WSAData.h" />
@@ -32,7 +31,6 @@
   <ItemGroup>
     <ClCompile Include="PacketScript.cpp" />
     <ClCompile Include="Setting.cpp" />
-    <ClCompile Include="Tool.cpp" />
     <ClCompile Include="UDPClient.cpp" />
     <ClCompile Include="UDPServer.cpp" />
   </ItemGroup>
@@ -91,16 +89,25 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>.\</OutDir>
     <TargetName>$(ProjectName)D</TargetName>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>.\</OutDir>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>.\</OutDir>
-    <TargetName>$(ProjectName)D</TargetName>
+    <TargetName>$(ProjectName)D64</TargetName>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>.\</OutDir>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir);$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -39,7 +39,10 @@ void FormatView::UpdateCellWidth()
 	std::vector<int> columnWidths = GetColumnWidths(totalWidth, kFormatColumnWidthRatio);
 	for (size_t i = 0; i < columnWidths.size(); i++)
 	{
-		m_packetFormatGridCtrl.SetColumnWidth(i, columnWidths[i]);
+		m_packetFormatGridCtrl.SetColumnWidth(
+			static_cast<int>(i),
+			static_cast<int>(columnWidths[i])
+		);
 	}
 }
 
@@ -57,40 +60,41 @@ BOOL FormatView::OnInitDialog()
 	// Adjust grid size
 	m_packetFormatGridCtrl.Create(CRect{}, this, IDC_PACKET_FORMAT_GRID, WS_CHILD | WS_VISIBLE | WS_BORDER);
 	m_packetFormatGridCtrl.SetFixedRowCount(1);
-	m_packetFormatGridCtrl.SetColumnCount(kFormatColumnTitle.size());
+	m_packetFormatGridCtrl.SetColumnCount(static_cast<int>(kFormatColumnTitle.size()));
 	m_genCodeButtonAnchorInfo = this->GetAnchorInfo(GetDlgItem(IDC_GEN_CODE_BUTTON));
 	m_sendButtonAnchorInfo = this->GetAnchorInfo(GetDlgItem(IDC_FORMAT_SEND_BUTTON));
 	// Set column title
 	for (size_t i = 0; i < kFormatColumnTitle.size(); i++)
 	{
 		std::wstring title = kFormatColumnTitle[i];
-		m_packetFormatGridCtrl.SetItemText(0, i, title.c_str());
+		m_packetFormatGridCtrl.SetItemText(0, static_cast<int>(i), title.c_str());
 	}
 	// Adjust grid rect size
 	this->UpdateCellWidth();
 	// Draw grid data
 	const std::vector<PacketFormatModel> pFormats = m_formatController->GetPacketFormatModels();
-	m_packetFormatGridCtrl.SetRowCount(pFormats.size() + 1);
+	m_packetFormatGridCtrl.SetRowCount(static_cast<int>(pFormats.size() + 1));
 	for (size_t i = 0; i < pFormats.size(); i++)
 	{
 		// Set cell text
 		const PacketFormatModel pFormat = pFormats[i];
-		m_packetFormatGridCtrl.SetItemText(i + 1, static_cast<int>(kFormatColumnType::Index), std::to_wstring(pFormat.GetIndex()).c_str());
-		m_packetFormatGridCtrl.SetItemText(i + 1, static_cast<int>(kFormatColumnType::RetAddr), pFormat.GetRetAddr().c_str());
-		m_packetFormatGridCtrl.SetItemText(i + 1, static_cast<int>(kFormatColumnType::Action), pFormat.GetActionText().c_str());
-		m_packetFormatGridCtrl.SetItemText(i + 1, static_cast<int>(kFormatColumnType::Size), std::to_wstring(pFormat.GetSize()).c_str());
-		m_packetFormatGridCtrl.SetItemText(i + 1, static_cast<int>(kFormatColumnType::Value), pFormat.GetValue().c_str());
-		m_packetFormatGridCtrl.SetItemText(i + 1, static_cast<int>(kFormatColumnType::Segment), pFormat.GetSegment().c_str());
-		m_packetFormatGridCtrl.SetItemText(i + 1, static_cast<int>(kFormatColumnType::Comment), pFormat.GetComment().c_str());
+		int currentRow = static_cast<int>(i + 1);
+		m_packetFormatGridCtrl.SetItemText(currentRow, static_cast<int>(kFormatColumnType::Index), std::to_wstring(pFormat.GetIndex()).c_str());
+		m_packetFormatGridCtrl.SetItemText(currentRow, static_cast<int>(kFormatColumnType::RetAddr), pFormat.GetRetAddr().c_str());
+		m_packetFormatGridCtrl.SetItemText(currentRow, static_cast<int>(kFormatColumnType::Action), pFormat.GetActionText().c_str());
+		m_packetFormatGridCtrl.SetItemText(currentRow, static_cast<int>(kFormatColumnType::Size), std::to_wstring(pFormat.GetSize()).c_str());
+		m_packetFormatGridCtrl.SetItemText(currentRow, static_cast<int>(kFormatColumnType::Value), pFormat.GetValue().c_str());
+		m_packetFormatGridCtrl.SetItemText(currentRow, static_cast<int>(kFormatColumnType::Segment), pFormat.GetSegment().c_str());
+		m_packetFormatGridCtrl.SetItemText(currentRow, static_cast<int>(kFormatColumnType::Comment), pFormat.GetComment().c_str());
 		// Set column state
-		m_packetFormatGridCtrl.SetItemState(i + 1, static_cast<int>(kFormatColumnType::Index), GVIS_READONLY);
-		m_packetFormatGridCtrl.SetItemState(i + 1, static_cast<int>(kFormatColumnType::RetAddr), GVIS_READONLY);
-		m_packetFormatGridCtrl.SetItemState(i + 1, static_cast<int>(kFormatColumnType::Action), GVIS_READONLY);
-		m_packetFormatGridCtrl.SetItemState(i + 1, static_cast<int>(kFormatColumnType::Size), GVIS_READONLY);
+		m_packetFormatGridCtrl.SetItemState(currentRow, static_cast<int>(kFormatColumnType::Index), GVIS_READONLY);
+		m_packetFormatGridCtrl.SetItemState(currentRow, static_cast<int>(kFormatColumnType::RetAddr), GVIS_READONLY);
+		m_packetFormatGridCtrl.SetItemState(currentRow, static_cast<int>(kFormatColumnType::Action), GVIS_READONLY);
+		m_packetFormatGridCtrl.SetItemState(currentRow, static_cast<int>(kFormatColumnType::Size), GVIS_READONLY);
 		// Set editable cell color
-		m_packetFormatGridCtrl.SetItemBkColour(i + 1, static_cast<int>(kFormatColumnType::Value), kEditableCellColor);
-		m_packetFormatGridCtrl.SetItemBkColour(i + 1, static_cast<int>(kFormatColumnType::Segment), kEditableCellColor);
-		m_packetFormatGridCtrl.SetItemBkColour(i + 1, static_cast<int>(kFormatColumnType::Comment), kEditableCellColor);
+		m_packetFormatGridCtrl.SetItemBkColour(currentRow, static_cast<int>(kFormatColumnType::Value), kEditableCellColor);
+		m_packetFormatGridCtrl.SetItemBkColour(currentRow, static_cast<int>(kFormatColumnType::Segment), kEditableCellColor);
+		m_packetFormatGridCtrl.SetItemBkColour(currentRow, static_cast<int>(kFormatColumnType::Comment), kEditableCellColor);
 	}
 	return TRUE;
 }

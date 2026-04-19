@@ -2,10 +2,12 @@
 #include "CClientSocket.h"
 #include "Router.h"
 
+void(__fastcall* SendPacket_EH)(void* packet) = nullptr;
+
 namespace CClientSocket {
 
 	void(__thiscall* ProcessPacket)(void* ecx, void* packet) = nullptr;
-	void __fastcall ProcessPacket_Hook(void* ecx, void* edx, void* packet) {
+	void __fastcall ProcessPacket_Hook(void* ecx, FASTCALL_EDX_PADDING void* packet) {
 		if (Router::gClientSocketPtr == nullptr) {
 			Router::gClientSocketPtr = ecx;
 		}
@@ -24,6 +26,6 @@ namespace CClientSocket {
 		CInPacket::DeleteActions(packet);
 	}
 
-	void(__thiscall* SendPacket)(void* ecx, void* packet) = nullptr;
+	void(__fastcall* SendPacket)(void* ecx, FASTCALL_EDX_PADDING void* packet) = nullptr;
 
 }

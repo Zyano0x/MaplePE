@@ -3,19 +3,6 @@
 #include "CClientSocket.h"
 #include "Router.h"
 
-#include "Share/Funcs.h"
-
-namespace {
-
-	inline bool checkAddr(uintptr_t addr, const std::wstring& funcName) {
-		if (addr == 0) {
-			DEBUGW(funcName + L" addr is empty");
-			return false;
-		}
-		return true;
-	}
-}
-
 namespace Hook {
 	void Install(void* lpParameter) {
 		HMODULE hModule = reinterpret_cast<HMODULE>(lpParameter);
@@ -23,30 +10,17 @@ namespace Hook {
 		Setting s{};
 		bool ok = LoadSetting(dllDir, s);
 		if (!ok) {
-			DEBUGW(L"Failed to load setting");
+			DEBUG(L"Failed to load setting");
 			return;
 		}
-		const std::vector<std::pair<ULONG_PTR, std::wstring>> checks{
-			{s.CInPacketDecode1Addr,L"CInPacket::Decode1"},
-			{s.CInPacketDecode2Addr,L"CInPacket::Decode2"},
-			{s.CInPacketDecode4Addr,L"CInPacket::Decode4"},
-			{s.CInPacketDecodeStrAddr,L"CInPacket::DecodeStr"},
-			{s.CInPacketDecodeBufferAddr,L"CInPacket::DecodeBuffer"},
-			{s.COutPacketEncode1Addr,L"COutPacket::Encode1"},
-			{s.COutPacketEncode2Addr,L"COutPacket::Encode2"},
-			{s.COutPacketEncode4Addr,L"COutPacket::Encode4"},
-			{s.COutPacketEncodeStrAddr,L"COutPacket::EncodeStr"},
-			{s.COutPacketEncodeBufferAddr,L"COutPacket::EncodeBuffer"},
-			{s.COutPacketMakeBufferListAddr,L"COutPacket::MakeBufferList"},
-		};
-		for (const auto& check : checks) {
-			if (!checkAddr(check.first, check.second)) {
-				return;
-			}
+		if (CheckEmptyAddr(s)) {
+			DEBUG(L"Some function addresses are missing.");
+			return;
 		}
 		// Filter Opcodes
 		CInPacket::UpdateFilterOpcodeSet(s.CInPacketFilterOpcodes);
 		COutPacket::UpdateFilterOpcodeSet(s.COutPacketFilterOpcodes);
+
 		// CInPacket::Decode1
 		SADDR(&CInPacket::Decode1, s.CInPacketDecode1Addr);
 		SHOOK(true, &CInPacket::Decode1, CInPacket::Decode1_Hook);
@@ -61,12 +35,18 @@ namespace Hook {
 			SADDR(&CInPacket::Decode8, s.CInPacketDecode8Addr);
 			SHOOK(true, &CInPacket::Decode8, CInPacket::Decode8_Hook);
 		}
+		// CInPacket::Skip8
+		if (s.CInPacketSkip8Addr > 0) {
+			SADDR(&CInPacket::Skip8, s.CInPacketSkip8Addr);
+			SHOOK(true, &CInPacket::Skip8, CInPacket::Skip8_Hook);
+		}
 		// CInPacket::DecodeStr
 		SADDR(&CInPacket::DecodeStr, s.CInPacketDecodeStrAddr);
 		SHOOK(true, &CInPacket::DecodeStr, CInPacket::DecodeStr_Hook);
 		// CInPacket::DecodeBuffer
 		SADDR(&CInPacket::DecodeBuffer, s.CInPacketDecodeBufferAddr);
 		SHOOK(true, &CInPacket::DecodeBuffer, CInPacket::DecodeBuffer_Hook);
+
 		// COutPacket::Encode1
 		SADDR(&COutPacket::Encode1, s.COutPacketEncode1Addr);
 		SHOOK(true, &COutPacket::Encode1, COutPacket::Encode1_Hook);
@@ -87,6 +67,7 @@ namespace Hook {
 		// COutPacket::EncodeBuffer
 		SADDR(&COutPacket::EncodeBuffer, s.COutPacketEncodeBufferAddr);
 		SHOOK(true, &COutPacket::EncodeBuffer, COutPacket::EncodeBuffer_Hook);
+
 		// COutPacket::MakeBufferList
 		// Since some versions after BB have hook detection in CClientSocket::SendPacket
 		// Using COutPacket::MakeBufferList_Hook instead of CClientSocket::SendPacket_Hook
@@ -95,9 +76,13 @@ namespace Hook {
 		// CClientSocket::ProcessPacket
 		SADDR(&CClientSocket::ProcessPacket, s.CClientSocketProcessPacketAddr);
 		SHOOK(true, &CClientSocket::ProcessPacket, CClientSocket::ProcessPacket_Hook);
-		// CClientSocket::SendPacket
-		SADDR(&CClientSocket::SendPacket, s.CClientSocketSendPacketAddr);
-		//SHOOK(true, &CClientSocket::SendPacket, CClientSocket::SendPacket_Hook);
+		// SendPacket
+		if (s.CClientSocketSendPacketAddr > 0) {
+			SADDR(&CClientSocket::SendPacket, s.CClientSocketSendPacketAddr);
+		}
+		if (s.SendPacketEHAddr > 0) {
+			SADDR(&SendPacket_EH, s.SendPacketEHAddr);
+		}
 		// Router Init
 		Router::Init(s.GUIServerIP, static_cast<uint16_t>(s.GUIServerPort));
 	}
@@ -106,18 +91,24 @@ namespace Hook {
 		SHOOK(false, &CInPacket::Decode1, CInPacket::Decode1_Hook);
 		SHOOK(false, &CInPacket::Decode2, CInPacket::Decode2_Hook);
 		SHOOK(false, &CInPacket::Decode4, CInPacket::Decode4_Hook);
-		SHOOK(false, &CInPacket::Decode8, CInPacket::Decode8_Hook);
+		if (CInPacket::Decode8 != nullptr) {
+			SHOOK(false, &CInPacket::Decode8, CInPacket::Decode8_Hook);
+		}
+		if (CInPacket::Skip8 != nullptr) {
+			SHOOK(false, &CInPacket::Skip8, CInPacket::Skip8_Hook);
+		}
 		SHOOK(false, &CInPacket::DecodeStr, CInPacket::DecodeStr_Hook);
 		SHOOK(false, &CInPacket::DecodeBuffer, CInPacket::DecodeBuffer_Hook);
 		SHOOK(false, &COutPacket::Encode1, COutPacket::Encode1_Hook);
 		SHOOK(false, &COutPacket::Encode2, COutPacket::Encode2_Hook);
 		SHOOK(false, &COutPacket::Encode4, COutPacket::Encode4_Hook);
-		SHOOK(false, &COutPacket::Encode8, COutPacket::Encode8_Hook);
+		if (COutPacket::Encode8 != nullptr) {
+			SHOOK(false, &COutPacket::Encode8, COutPacket::Encode8_Hook);
+		}
 		SHOOK(false, &COutPacket::EncodeStr, COutPacket::EncodeStr_Hook);
 		SHOOK(false, &COutPacket::EncodeBuffer, COutPacket::EncodeBuffer_Hook);
 		SHOOK(false, &COutPacket::MakeBufferList, COutPacket::MakeBufferList_Hook);
 		SHOOK(false, &CClientSocket::ProcessPacket, CClientSocket::ProcessPacket_Hook);
-		//SHOOK(false, &CClientSocket::SendPacket, CClientSocket::SendPacket_Hook);
 		Router::Free();
 	}
 }

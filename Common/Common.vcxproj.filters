@@ -24,9 +24,6 @@
     <ClInclude Include="PacketScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -48,9 +45,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UDPServer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Setting.cpp">

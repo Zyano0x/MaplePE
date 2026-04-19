@@ -18,13 +18,47 @@
 #include<intrin.h>
 #pragma intrinsic(_ReturnAddress)
 
+#ifdef _WIN64
+#define FASTCALL_EDX_PADDING
+#else
+#define FASTCALL_EDX_PADDING void* edx,
+#endif
+
+
 #pragma region lib
 
 #include "Common.h"
-#ifdef _DEBUG
-#pragma comment(lib, "CommonD.lib")
+#ifdef _WIN64
+	#ifdef _DEBUG
+		#pragma comment(lib, "CommonD64.lib")
+	#else
+		#pragma comment(lib, "Common64.lib")
+	#endif
 #else
-#pragma comment(lib, "Common.lib")
+	#ifdef _DEBUG
+		#pragma comment(lib, "CommonD.lib")
+	#else
+		#pragma comment(lib, "Common.lib")
+	#endif
+#endif
+
+#ifndef IS_DEBUG_MODE
+#define IS_DEBUG_MODE true
+#endif
+
+#include "MemorySDK.h"
+#ifdef _WIN64
+	#ifdef _DEBUG
+		#pragma comment(lib, "MemorySDKD64.lib")
+	#else
+		#pragma comment(lib, "MemorySDK64.lib")
+	#endif
+#else
+	#ifdef _DEBUG
+		#pragma comment(lib, "MemorySDKD.lib")
+	#else
+		#pragma comment(lib, "MemorySDK.lib")
+	#endif
 #endif
 
 #pragma endregion

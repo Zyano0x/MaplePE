@@ -17,6 +17,7 @@
 *.dll
 *.pdb
 *.idb
+common/*.lib
 
 # Fortran module files
 *.mod
@@ -35,7 +36,6 @@
 # Temp file
 *.APS
 *.txt
-!detours.txt
 .vs
 Debug
 Release

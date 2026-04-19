@@ -85,12 +85,12 @@
     <IncludePath>$(ProjectDir)include;$(ProjectDir)..\Common;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>MaplePE</TargetName>
+    <TargetName>MaplePE64</TargetName>
     <LibraryPath>$(ProjectDir)lib;$(ProjectDir)..\\Common;$(LibraryPath)</LibraryPath>
     <IncludePath>$(ProjectDir)include;$(ProjectDir)..\Common;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>MaplePE</TargetName>
+    <TargetName>MaplePE64</TargetName>
     <LibraryPath>$(ProjectDir)lib;$(ProjectDir)..\\Common;$(LibraryPath)</LibraryPath>
     <IncludePath>$(ProjectDir)include;$(ProjectDir)..\Common;$(IncludePath)</IncludePath>
   </PropertyGroup>

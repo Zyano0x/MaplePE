@@ -1,5 +1,5 @@
 # MaplePE
-A 32-bit MapleStory Packet Editor that can parse packet structures and send custom packets to the client
+A MapleStory Packet Editor that can parse packet structures and send custom packets to the client
 
 ## Features
 - Extract InPacket and OutPacket information from the target process
@@ -17,6 +17,7 @@ A 32-bit MapleStory Packet Editor that can parse packet structures and send cust
 	- `CInPacket::Decode2`
 	- `CInPacket::Decode4`
 	- `CInPacket::Decode8` (optional)
+	- `CInPacket::Skip8` (optional)
 	- `CInPacket::DecodeStr`
 	- `CInPacket::DecodeBuffer`
 	- `COutPacket::Encode1`
@@ -27,7 +28,8 @@ A 32-bit MapleStory Packet Editor that can parse packet structures and send cust
 	- `COutPacket::EncodeBuffer`
 	- `COutPacket::MakeBufferList`
 	- `CClientSocket::ProcessPacket`
-	- `CClientSocket::SendPacket`
+	- `CClientSocket::SendPacket` (optional)
+	- `SendPacketEH` (optional)
 - Run `MaplePE.exe` and click the icon to open the `SettingView`
 - Fill in the function addresses and save setting
 - Use your launcher to start the game client
@@ -39,7 +41,8 @@ A 32-bit MapleStory Packet Editor that can parse packet structures and send cust
 - There are several possible reasons why the injection might fail
 	- Permission denied: Please run `MaplePE.exe` as administrator
 	- Missing `Packet.dll`: Some security software may delete unknown DLL files
-	- Injection protection: Some launchers implement memory protection to prevent DLL injection
+	- Game Anti-Cheat: Please bypass Security Client if it blocks `WriteProcessMemory` 
+	- Injection protection: Some third-party launchers implement memory protection to prevent DLL injection
 
 ### Edit
 - Select a packet item will display the full bytes in the bottom
@@ -108,7 +111,7 @@ void __fastcall CClientSocket::SendPacket(CClientSocket *this, int a2, COutPacke
 	- C++ MFC for the latest v143 build tools (x86 & x64)
 	- `MFC-GridCtrl` linked as a static library (.lib)
 - Networking library: WinSock2 (Windows Sockets API)
-- Hooking library: `Detours` linked as a static library (.lib)
+- Hooking library: `MemoryLib` linked as a static library (.lib)
 - To maintain control ID order
 	- If a new control is added via Resource View, please manually copy its ID to `resource_ids.h`
 	- Remove all auto-generated control IDs from `resource.h` and include `resource_ids.h` in `resource.h`
@@ -116,5 +119,4 @@ void __fastcall CClientSocket::SendPacket(CClientSocket *this, int a2, COutPacke
 ## Credits
 [RirePE](https://github.com/Riremito/RirePE) offers similar features to this tool  
 [KaedeEditor](https://github.com/Riremito/KaedeEditor) provides function addresses for some versions through AOB scanning  
-[MFC-GridCtrl](https://github.com/ChrisMaunder/MFC-GridCtrl) is a grid control for displaying packet structures in a tabular format  
-[Detours](https://github.com/microsoft/Detours) is a software package for monitoring and instrumenting API calls on Windows
+[MFC-GridCtrl](https://github.com/ChrisMaunder/MFC-GridCtrl) is a grid control for displaying packet structures in a tabular format

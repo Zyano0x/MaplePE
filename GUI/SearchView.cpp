@@ -53,7 +53,7 @@ BOOL SearchView::OnInitDialog()
 	std::vector<int> columnWidths = GetColumnWidths(totalWidth, kLogColumnWidthRatio);
 	for (size_t i = 0; i < columnWidths.size(); i++)
 	{
-		m_packetLogSearchListCtrl.InsertColumn(i, kLogColumnTitle[i].c_str(), LVCFMT_LEFT, columnWidths[i]);
+		m_packetLogSearchListCtrl.InsertColumn(static_cast<int>(i), kLogColumnTitle[i].c_str(), LVCFMT_LEFT, columnWidths[i]);
 	}
 	return TRUE;
 }
@@ -98,15 +98,16 @@ void SearchView::OnBnClickedFindButton()
 	std::vector<std::pair<int, PacketLogModel>> result = m_searchController->SearchPacketLog(selIndex, pid, searchText);
 	for (size_t i = 0; i < result.size(); i++)
 	{
-		const std::wstring id = std::to_wstring(result[i].first);
-		const PacketLogModel& log = result[i].second;
-		m_packetLogSearchListCtrl.InsertItem(i, id.c_str());
-		m_packetLogSearchListCtrl.SetItemText(i, static_cast<int>(kLogColumnType::PID), log.GetPIDStr().c_str());
-		m_packetLogSearchListCtrl.SetItemText(i, static_cast<int>(kLogColumnType::Index), log.GetIndexStr().c_str());
-		m_packetLogSearchListCtrl.SetItemText(i, static_cast<int>(kLogColumnType::Type), log.GetType().c_str());
-		m_packetLogSearchListCtrl.SetItemText(i, static_cast<int>(kLogColumnType::Length), log.GetLengthStr().c_str());
-		m_packetLogSearchListCtrl.SetItemText(i, static_cast<int>(kLogColumnType::Opcode), log.GetOpcodeStr().c_str());
-		m_packetLogSearchListCtrl.SetItemText(i, static_cast<int>(kLogColumnType::Data), log.GetData().c_str());
+		int n = static_cast<int>(i);
+		const std::wstring id = std::to_wstring(result[n].first);
+		const PacketLogModel& log = result[n].second;
+		m_packetLogSearchListCtrl.InsertItem(n, id.c_str());
+		m_packetLogSearchListCtrl.SetItemText(n, static_cast<int>(kLogColumnType::PID), log.GetPIDStr().c_str());
+		m_packetLogSearchListCtrl.SetItemText(n, static_cast<int>(kLogColumnType::Index), log.GetIndexStr().c_str());
+		m_packetLogSearchListCtrl.SetItemText(n, static_cast<int>(kLogColumnType::Type), log.GetType().c_str());
+		m_packetLogSearchListCtrl.SetItemText(n, static_cast<int>(kLogColumnType::Length), log.GetLengthStr().c_str());
+		m_packetLogSearchListCtrl.SetItemText(n, static_cast<int>(kLogColumnType::Opcode), log.GetOpcodeStr().c_str());
+		m_packetLogSearchListCtrl.SetItemText(n, static_cast<int>(kLogColumnType::Data), log.GetData().c_str());
 	}
 }
 

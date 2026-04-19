@@ -27,6 +27,7 @@ const std::vector<std::wstring> SettingController::Deserialize(const Setting& s)
 		PacketScript::Int2Hex(s.CInPacketDecode2Addr),
 		PacketScript::Int2Hex(s.CInPacketDecode4Addr),
 		PacketScript::Int2Hex(s.CInPacketDecode8Addr),
+		PacketScript::Int2Hex(s.CInPacketSkip8Addr),
 		PacketScript::Int2Hex(s.CInPacketDecodeStrAddr),
 		PacketScript::Int2Hex(s.CInPacketDecodeBufferAddr),
 		PacketScript::Int2Hex(s.COutPacketEncode1Addr),
@@ -38,10 +39,12 @@ const std::vector<std::wstring> SettingController::Deserialize(const Setting& s)
 		PacketScript::Int2Hex(s.COutPacketMakeBufferListAddr),
 		PacketScript::Int2Hex(s.CClientSocketProcessPacketAddr),
 		PacketScript::Int2Hex(s.CClientSocketSendPacketAddr),
+		PacketScript::Int2Hex(s.SendPacketEHAddr),
 		s.CInPacketDecode1GenCode,
 		s.CInPacketDecode2GenCode,
 		s.CInPacketDecode4GenCode,
 		s.CInPacketDecode8GenCode,
+		s.CInPacketSkip8GenCode,
 		s.CInPacketDecodeStrGenCode,
 		s.CInPacketDecodeBufferGenCode,
 		s.COutPacketEncode1GenCode,
@@ -69,6 +72,7 @@ const Setting SettingController::Serialize(const std::vector<std::wstring>& prop
 		WSTR2ULONGPTR(propValues[++index]), // CInPacketDecode2Addr
 		WSTR2ULONGPTR(propValues[++index]), // CInPacketDecode4Addr
 		WSTR2ULONGPTR(propValues[++index]), // CInPacketDecode8Addr
+		WSTR2ULONGPTR(propValues[++index]), // CInPacketSkip8Addr
 		WSTR2ULONGPTR(propValues[++index]), // CInPacketDecodeStrAddr
 		WSTR2ULONGPTR(propValues[++index]), // CInPacketDecodeBufferAddr
 		WSTR2ULONGPTR(propValues[++index]), // COutPacketEncode1Addr
@@ -80,10 +84,12 @@ const Setting SettingController::Serialize(const std::vector<std::wstring>& prop
 		WSTR2ULONGPTR(propValues[++index]), // COutPacketMakeBufferListAddr
 		WSTR2ULONGPTR(propValues[++index]), // CClientSocketProcessPacketAddr
 		WSTR2ULONGPTR(propValues[++index]), // CClientSocketSendPacketAddr
+		WSTR2ULONGPTR(propValues[++index]), // SendPacketEHAddr
 		propValues[++index], // CInPacketDecode1GenCode
 		propValues[++index], // CInPacketDecode2GenCode
 		propValues[++index], // CInPacketDecode4GenCode
 		propValues[++index], // CInPacketDecode8GenCode
+		propValues[++index], // CInPacketSkip8GenCode
 		propValues[++index], // CInPacketDecodeStrGenCode
 		propValues[++index], // CInPacketDecodeBufferGenCode
 		propValues[++index], // COutPacketEncode1GenCode

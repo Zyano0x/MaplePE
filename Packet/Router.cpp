@@ -15,7 +15,7 @@ namespace Router {
 
 	void Init(const std::wstring& serverIP, const uint16_t serverPort) {
 		if (gGUIClient != nullptr) {
-			DEBUGW(L"GUIClient already initialized");
+			DEBUG(L"GUIClient already initialized");
 			return;
 		}
 		gGUIClient = new GUIClient(serverIP, serverPort);
@@ -37,18 +37,30 @@ namespace Router {
 
 	void ProcessPacket(void* iPacket) {
 		if (gClientSocketPtr == nullptr) {
-			DEBUGW(L"ClientSocket has not been specified");
+			DEBUG(L"ClientSocket has not been specified");
 			return;
 		}
+#ifdef _WIN64
+		CClientSocket::ProcessPacket_Hook(gClientSocketPtr, iPacket);
+#else
 		CClientSocket::ProcessPacket_Hook(gClientSocketPtr, nullptr, iPacket);
+#endif
 	}
 
 	void SendPacket(void* oPacket) {
+		if (SendPacket_EH != nullptr) {
+			SendPacket_EH(oPacket);
+			return;
+		}
 		if (gClientSocketPtr == nullptr) {
-			DEBUGW(L"ClientSocket has not been specified");
+			DEBUG(L"ClientSocket has not been specified");
 			COutPacket::DeleteActions(oPacket);
 			return;
 		}
+#ifdef _WIN64
 		CClientSocket::SendPacket(gClientSocketPtr, oPacket);
+#else
+		CClientSocket::SendPacket(gClientSocketPtr, nullptr, oPacket);
+#endif
 	}
 }

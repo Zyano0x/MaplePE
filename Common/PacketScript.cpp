@@ -9,7 +9,7 @@ namespace PacketScript {
 		ss << std::uppercase << std::hex << std::setfill(L'0');
 	}
 
-	std::wstring Int2Hex(uint32_t v) {
+	std::wstring Int2Hex(ULONG_PTR v) {
 		std::wstringstream ss;
 		InitHexStream(ss);
 		ss << L"0x" << std::setw(8) << v;
@@ -68,22 +68,24 @@ namespace PacketScript {
 	}
 
 	std::wstring MultiByte2WideChar(const char* pStr, size_t uSize) {
-		int wcharLen = MultiByteToWideChar(kSystemAnsiCodePage, 0, pStr, uSize, nullptr, 0);
+		int strLen = static_cast<int>(uSize);
+		int wcharLen = MultiByteToWideChar(kSystemAnsiCodePage, 0, pStr, strLen, nullptr, 0);
 		if (wcharLen <= 0) {
 			return std::wstring();
 		}
 		std::wstring result(wcharLen, 0);
-		MultiByteToWideChar(kSystemAnsiCodePage, 0, pStr, uSize, &result[0], wcharLen);
+		MultiByteToWideChar(kSystemAnsiCodePage, 0, pStr, strLen, &result[0], wcharLen);
 		return result;
 	}
 
 	std::string WideChar2MultiByte(const std::wstring& wstr) {
-		int byteLen = WideCharToMultiByte(kSystemAnsiCodePage, 0, wstr.c_str(), wstr.size(), nullptr, 0, nullptr, nullptr);
+		int wstrLen = static_cast<int>(wstr.size());
+		int byteLen = WideCharToMultiByte(kSystemAnsiCodePage, 0, wstr.c_str(), wstrLen, nullptr, 0, nullptr, nullptr);
 		if (byteLen <= 0) {
 			return std::string();
 		}
 		std::string result(byteLen, 0);
-		WideCharToMultiByte(kSystemAnsiCodePage, 0, wstr.c_str(), wstr.size(), &result[0], byteLen, nullptr, nullptr);
+		WideCharToMultiByte(kSystemAnsiCodePage, 0, wstr.c_str(), wstrLen, &result[0], byteLen, nullptr, nullptr);
 		return result;
 	}
 
@@ -173,8 +175,6 @@ namespace PacketScript {
 		}
 		return {};
 	}
-
-
 
 	std::wstring DecodeStr(const std::vector<uint8_t>& buffer, size_t& pos, size_t& uSize) {
 		uSize = Decode2(buffer, pos);

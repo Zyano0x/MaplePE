@@ -21,8 +21,7 @@ bool CheckEmptyAddr(const Setting& s) {
 		s.COutPacketEncodeStrAddr == 0 ||
 		s.COutPacketEncodeBufferAddr == 0 ||
 		s.COutPacketMakeBufferListAddr == 0 ||
-		s.CClientSocketProcessPacketAddr == 0 ||
-		s.CClientSocketSendPacketAddr == 0;
+		s.CClientSocketProcessPacketAddr == 0;
 }
 
 bool LoadSetting(std::wstring dir, Setting& s) {
@@ -56,6 +55,7 @@ bool LoadSetting(std::wstring dir, Setting& s) {
 		SET_ADDR_FIELD(CInPacketDecode2Addr)
 		SET_ADDR_FIELD(CInPacketDecode4Addr)
 		SET_ADDR_FIELD(CInPacketDecode8Addr)
+		SET_ADDR_FIELD(CInPacketSkip8Addr)
 		SET_ADDR_FIELD(CInPacketDecodeStrAddr)
 		SET_ADDR_FIELD(CInPacketDecodeBufferAddr)
 		SET_ADDR_FIELD(COutPacketEncode1Addr)
@@ -67,6 +67,7 @@ bool LoadSetting(std::wstring dir, Setting& s) {
 		SET_ADDR_FIELD(COutPacketMakeBufferListAddr)
 		SET_ADDR_FIELD(CClientSocketProcessPacketAddr)
 		SET_ADDR_FIELD(CClientSocketSendPacketAddr)
+		SET_ADDR_FIELD(SendPacketEHAddr)
 		// Template code
 		SET_WSTR_FIELD(CInPacketDecode1GenCode)
 		SET_WSTR_FIELD(CInPacketDecode2GenCode)
@@ -104,6 +105,7 @@ bool SaveSetting(std::wstring dir, const Setting& s) {
 	wfile << L"CInPacketDecode2Addr=0x" << std::hex << s.CInPacketDecode2Addr << L"\n";
 	wfile << L"CInPacketDecode4Addr=0x" << std::hex << s.CInPacketDecode4Addr << L"\n";
 	wfile << L"CInPacketDecode8Addr=0x" << std::hex << s.CInPacketDecode8Addr << L"\n";
+	wfile << L"CInPacketSkip8Addr=0x" << std::hex << s.CInPacketSkip8Addr << L"\n";
 	wfile << L"CInPacketDecodeStrAddr=0x" << std::hex << s.CInPacketDecodeStrAddr << L"\n";
 	wfile << L"CInPacketDecodeBufferAddr=0x" << std::hex << s.CInPacketDecodeBufferAddr << L"\n";
 	wfile << L"COutPacketEncode1Addr=0x" << std::hex << s.COutPacketEncode1Addr << L"\n";
@@ -115,6 +117,7 @@ bool SaveSetting(std::wstring dir, const Setting& s) {
 	wfile << L"COutPacketMakeBufferListAddr=0x" << std::hex << s.COutPacketMakeBufferListAddr << L"\n";
 	wfile << L"CClientSocketProcessPacketAddr=0x" << std::hex << s.CClientSocketProcessPacketAddr << L"\n";
 	wfile << L"CClientSocketSendPacketAddr=0x" << std::hex << s.CClientSocketSendPacketAddr << L"\n";
+	wfile << L"SendPacketEHAddr=0x" << std::hex << s.SendPacketEHAddr << L"\n";
 	// Template code
 	wfile << L"CInPacketDecode1GenCode=" << s.CInPacketDecode1GenCode << L"\n";
 	wfile << L"CInPacketDecode2GenCode=" << s.CInPacketDecode2GenCode << L"\n";

@@ -6,7 +6,7 @@
 
 namespace {
 
-	const int kSettingProNameWidth = 220;
+	const int kSettingProNameWidth = 260;
 
 	const std::vector<std::wstring> kSettingPropName{
 		L"GameProcessName",
@@ -20,6 +20,7 @@ namespace {
 		L"CInPacket::Decode2 Addr",
 		L"CInPacket::Decode4 Addr",
 		L"CInPacket::Decode8 Addr (optional)",
+		L"CInPacket::Skip8 Addr (optional)",
 		L"CInPacket::DecodeStr Addr",
 		L"CInPacket::DecodeBuffer Addr",
 		L"COutPacket::Encode1 Addr",
@@ -30,11 +31,13 @@ namespace {
 		L"COutPacket::EncodeBuffer Addr",
 		L"COutPacket::MakeBufferList Addr",
 		L"CClientSocket::ProcessPacket Addr",
-		L"CClientSocket::SendPacket Addr",
+		L"CClientSocket::SendPacket Addr (optional)",
+		L"SendPacketEH Addr (optional)",
 		L"CInPacket::Decode1 GenCode",
 		L"CInPacket::Decode2 GenCode",
 		L"CInPacket::Decode4 GenCode",
 		L"CInPacket::Decode8 GenCode",
+		L"CInPacket::Skip8 GenCode",
 		L"CInPacket::DecodeStr GenCode",
 		L"CInPacket::DecodeBufferGenCode",
 		L"COutPacket::Encode1 GenCode",

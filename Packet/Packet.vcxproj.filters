@@ -13,19 +13,10 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Share">
-      <UniqueIdentifier>{9e7b5bc0-f441-41f9-a5e0-1d59d9e05b74}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Share">
-      <UniqueIdentifier>{44996a60-3fdc-44cf-8fc8-9298fced7f1a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Share\Funcs.cpp">
-      <Filter>Source Files\Share</Filter>
     </ClCompile>
     <ClCompile Include="Hook.cpp">
       <Filter>Source Files</Filter>
@@ -50,9 +41,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Share\Funcs.h">
-      <Filter>Header Files\Share</Filter>
-    </ClInclude>
     <ClInclude Include="Hook.h">
       <Filter>Header Files</Filter>
     </ClInclude>

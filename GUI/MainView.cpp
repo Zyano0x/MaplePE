@@ -72,7 +72,7 @@ BOOL MainView::OnInitDialog()
 	std::vector<int> columnWidths = GetColumnWidths(totalWidth, kLogColumnWidthRatio);
 	for (size_t i = 0; i < columnWidths.size(); i++)
 	{
-		m_packetLogListCtrl.InsertColumn(i, kLogColumnTitle[i].c_str(), LVCFMT_LEFT, columnWidths[i]);
+		m_packetLogListCtrl.InsertColumn(static_cast<int>(i), kLogColumnTitle[i].c_str(), LVCFMT_LEFT, columnWidths[i]);
 	}
 	// Set "PID" as default value
 	m_pidEdit.SendMessageW(EM_SETCUEBANNER, 0, (LPARAM)_T("PID"));
@@ -236,7 +236,7 @@ void MainView::OnLvnItemchangedPacketLogList(NMHDR* pNMHDR, LRESULT* pResult)
 		size_t lineLength = kBytesPerLine * 3;
 		for (size_t i = 0; i < dataLength; i += lineLength)
 		{
-			text += data.Mid(i, lineLength);
+			text += data.Mid(static_cast<int>(i), static_cast<int>(lineLength));
 			if (i + lineLength < dataLength) {
 				text += "\r\n";
 			}

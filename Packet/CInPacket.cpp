@@ -27,12 +27,12 @@ namespace CInPacket {
 				tempSet.insert(opcode);
 			}
 			catch (const std::exception&) {
-				DEBUGW(L"Unknown filter opcodes")
+				DEBUG(L"Unknown filter opcodes")
 			}
 		}
 
 		if (tempSet.empty()) {
-			DEBUGW(L"Failed to update CInPacketFilterOpcodeSet: no valid opcodes found");
+			DEBUG(L"Failed to update CInPacketFilterOpcodeSet: no valid opcodes found");
 			return;
 		}
 
@@ -63,7 +63,7 @@ namespace CInPacket {
 	uint8_t __fastcall Decode1_Hook(void* ecx) {
 		uint8_t result = Decode1(ecx);
 		if (IsPayload(ecx)) {
-			auto action = PacketAction{ PacketActionType::Decode1,1,(uint32_t)_ReturnAddress() };
+			auto action = PacketAction{ PacketActionType::Decode1,1,(ULONG_PTR)_ReturnAddress() };
 			auto actions = GetActions(ecx);
 			if (actions == nullptr) {
 				if (IsFilterOpcode(result)) {
@@ -85,7 +85,7 @@ namespace CInPacket {
 		uint16_t result = Decode2(ecx);
 		if (IsPayload(ecx)) {
 			// CInPacket::AppendBuffer will call twice CInPacket::Decode2 as header in GMS95
-			auto action = PacketAction{ PacketActionType::Decode2,2,(uint32_t)_ReturnAddress() };
+			auto action = PacketAction{ PacketActionType::Decode2,2,(ULONG_PTR)_ReturnAddress() };
 			auto actions = GetActions(ecx);
 			if (actions == nullptr) {
 				if (IsFilterOpcode(result)) {
@@ -108,7 +108,7 @@ namespace CInPacket {
 			// CInPacket::AppendBuffer will call once CInPacket::Decode4 as header in KMS1029
 			auto actions = GetActions(ecx);
 			if (actions != nullptr && !actions->empty()) {
-				actions->push_back(PacketAction{ PacketActionType::Decode4,4,(uint32_t)_ReturnAddress() });
+				actions->push_back(PacketAction{ PacketActionType::Decode4,4,(ULONG_PTR)_ReturnAddress() });
 			}
 		}
 		return Decode4(ecx);
@@ -119,29 +119,41 @@ namespace CInPacket {
 		if (IsPayload(ecx)) {
 			auto actions = GetActions(ecx);
 			if (actions != nullptr && !actions->empty()) {
-				actions->push_back(PacketAction{ PacketActionType::Decode8,8,(uint32_t)_ReturnAddress() });
+				actions->push_back(PacketAction{ PacketActionType::Decode8,8,(ULONG_PTR)_ReturnAddress() });
 			}
 		}
 		return Decode8(ecx);
 	}
 
-	char** (__thiscall* DecodeStr)(void* iPacket, char** result) = nullptr;
-	char** __fastcall DecodeStr_Hook(void* ecx, void* edx, char** result) {
+	extern uint64_t(__thiscall* Skip8)(void* ecx) = nullptr;
+	uint64_t __fastcall Skip8_Hook(void* ecx)
+	{
 		if (IsPayload(ecx)) {
 			auto actions = GetActions(ecx);
 			if (actions != nullptr && !actions->empty()) {
-				actions->push_back(PacketAction{ PacketActionType::DecodeStr,0,(uint32_t)_ReturnAddress() });
+				actions->push_back(PacketAction{ PacketActionType::Skip8,8,(ULONG_PTR)_ReturnAddress() });
+			}
+		}
+		return Skip8(ecx);
+	}
+
+	char** (__thiscall* DecodeStr)(void* iPacket, char** result) = nullptr;
+	char** __fastcall DecodeStr_Hook(void* ecx, FASTCALL_EDX_PADDING char** result) {
+		if (IsPayload(ecx)) {
+			auto actions = GetActions(ecx);
+			if (actions != nullptr && !actions->empty()) {
+				actions->push_back(PacketAction{ PacketActionType::DecodeStr,0,(ULONG_PTR)_ReturnAddress() });
 			}
 		}
 		return DecodeStr(ecx, result);
 	}
 
 	void(__thiscall* DecodeBuffer)(void* ecx, uint8_t* p, size_t uSize) = nullptr;
-	void __fastcall DecodeBuffer_Hook(void* ecx, void* edx, uint8_t* p, size_t uSize) {
+	void __fastcall DecodeBuffer_Hook(void* ecx, FASTCALL_EDX_PADDING uint8_t* p, size_t uSize) {
 		if (IsPayload(ecx)) {
 			auto actions = GetActions(ecx);
 			if (actions != nullptr && !actions->empty()) {
-				actions->push_back(PacketAction{ PacketActionType::DecodeBuffer,uSize,(uint32_t)_ReturnAddress() });
+				actions->push_back(PacketAction{ PacketActionType::DecodeBuffer,uSize,(ULONG_PTR)_ReturnAddress() });
 			}
 		}
 		return DecodeBuffer(ecx, p, uSize);

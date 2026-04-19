@@ -126,7 +126,8 @@ void GUIServer::HandleDatagram(const void* buf, size_t bufLen, const std::string
 		break;
 	}
 	default:
-		DEBUGW(L"Unknown opcode received " + std::to_wstring(static_cast<uint16_t>(op)));
+		std::wstring err = L"Unknown opcode received " + std::to_wstring(static_cast<uint16_t>(op));
+		MessageBoxW(NULL, err.c_str(), L"Protocol Error", MB_OK | MB_ICONERROR | MB_TOPMOST);
 		break;
 	}
 }

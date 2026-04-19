@@ -7,7 +7,11 @@ const std::wstring kSettingFilename = L"Setting.txt";
 struct Setting {
 	// Base info
 	std::wstring GameProcessName = L"MapleStory.exe";
+#ifdef _WIN64
+	std::wstring PacketDllName = L"Packet64.dll";
+#else
 	std::wstring PacketDllName = L"Packet.dll";
+#endif
 	std::wstring GUIServerIP = L"127.0.0.1";
 	ULONG_PTR GUIServerPort = 0xC0DE;
 	bool IsTypeHeader1Byte = false;
@@ -21,6 +25,7 @@ struct Setting {
 	ULONG_PTR CInPacketDecode2Addr = 0x00000000;
 	ULONG_PTR CInPacketDecode4Addr = 0x00000000;
 	ULONG_PTR CInPacketDecode8Addr = 0x00000000;
+	ULONG_PTR CInPacketSkip8Addr = 0x00000000;
 	ULONG_PTR CInPacketDecodeStrAddr = 0x00000000;
 	ULONG_PTR CInPacketDecodeBufferAddr = 0x00000000;
 
@@ -34,11 +39,14 @@ struct Setting {
 
 	ULONG_PTR CClientSocketProcessPacketAddr = 0x00000000;
 	ULONG_PTR CClientSocketSendPacketAddr = 0x00000000;
+	ULONG_PTR SendPacketEHAddr = 0x00000000;
+
 	// Template code
 	std::wstring CInPacketDecode1GenCode = L"v%d := iPacket.Decode1()";
 	std::wstring CInPacketDecode2GenCode = L"v%d := iPacket.Decode2()";
 	std::wstring CInPacketDecode4GenCode = L"v%d := iPacket.Decode4()";
 	std::wstring CInPacketDecode8GenCode = L"v%d := iPacket.Decode8()";
+	std::wstring CInPacketSkip8GenCode = L"v%d := iPacket.Skip8()";
 	std::wstring CInPacketDecodeStrGenCode = L"str%d := iPacket.DecodeStr()";
 	std::wstring CInPacketDecodeBufferGenCode = L"buf%d := iPacket.DecodeBuffer(%d)";
 

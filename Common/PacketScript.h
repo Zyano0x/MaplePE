@@ -15,7 +15,7 @@ namespace PacketScript {
 
 	void InitHexStream(std::wstringstream& ss);
 
-	std::wstring Int2Hex(uint32_t v);
+	std::wstring Int2Hex(ULONG_PTR v);
 
 	void Buffer2Data(std::vector<uint8_t>& buffer, std::wstring& data);
 
