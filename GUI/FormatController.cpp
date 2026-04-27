@@ -249,7 +249,7 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 		std::wstring comment = format.GetComment();
 		std::wstring line;
 		switch (actionType) {
-		case Decode1: {
+		case Encode1: {
 			wchar_t code[256];
 			swprintf_s(code, s.CInPacketDecode1GenCode.c_str(), index);
 			line = code;
@@ -258,7 +258,7 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 			}
 			break;
 		}
-		case Decode2: {
+		case Encode2: {
 			wchar_t code[256];
 			swprintf_s(code, s.CInPacketDecode2GenCode.c_str(), index);
 			line = code;
@@ -267,7 +267,7 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 			}
 			break;
 		}
-		case Decode4: {
+		case Encode4: {
 			wchar_t code[256];
 			swprintf_s(code, s.CInPacketDecode4GenCode.c_str(), index);
 			line = code;
@@ -276,7 +276,7 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 			}
 			break;
 		}
-		case Decode8: {
+		case Encode8: {
 			wchar_t code[256];
 			swprintf_s(code, s.CInPacketDecode8GenCode.c_str(), index);
 			line = code;
@@ -285,16 +285,7 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 			}
 			break;
 		}
-		case Skip8: {
-			wchar_t code[256];
-			swprintf_s(code, s.CInPacketSkip8GenCode.c_str(), index);
-			line = code;
-			if (!comment.empty()) {
-				line += kCommentSymbol + comment;
-			}
-			break;
-		}
-		case DecodeStr: {
+		case EncodeStr: {
 			wchar_t code[256];
 			swprintf_s(code, s.CInPacketDecodeStrGenCode.c_str(), index);
 			line = code;
@@ -303,7 +294,7 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 			}
 			break;
 		}
-		case DecodeBuffer: {
+		case EncodeBuffer: {
 			wchar_t code[256];
 			swprintf_s(code, s.CInPacketDecodeBufferGenCode.c_str(), index, format.GetSize());
 			line = code;
@@ -312,7 +303,7 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 			}
 			break;
 		}
-		case Encode1: {
+		case Decode1: {
 			wchar_t code[256];
 			swprintf_s(code, s.COutPacketEncode1GenCode.c_str(), format.GetValue().c_str());
 			line = code;
@@ -321,7 +312,7 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 			}
 			break;
 		}
-		case Encode2: {
+		case Decode2: {
 			wchar_t code[256];
 			swprintf_s(code, s.COutPacketEncode2GenCode.c_str(), format.GetValue().c_str());
 			line = code;
@@ -330,7 +321,7 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 			}
 			break;
 		}
-		case Encode4: {
+		case Decode4: {
 			wchar_t code[256];
 			swprintf_s(code, s.COutPacketEncode4GenCode.c_str(), format.GetValue().c_str());
 			line = code;
@@ -339,7 +330,7 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 			}
 			break;
 		}
-		case Encode8: {
+		case Decode8: {
 			wchar_t code[256];
 			swprintf_s(code, s.COutPacketEncode8GenCode.c_str(), format.GetValue().c_str());
 			line = code;
@@ -348,7 +339,16 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 			}
 			break;
 		}
-		case EncodeStr: {
+		case Skip8: {
+			wchar_t code[256];
+			swprintf_s(code, s.COutPacketEncode8GenCode.c_str(), format.GetValue().c_str());
+			line = code;
+			if (!comment.empty()) {
+				line += kCommentSymbol + comment;
+			}
+			break;
+		}
+		case DecodeStr: {
 			wchar_t code[256];
 			swprintf_s(code, s.COutPacketEncodeStrGenCode.c_str(), format.GetValue().c_str());
 			line = code;
@@ -357,7 +357,7 @@ void FormatController::GenCodes(std::vector<std::wstring>& codes)
 			}
 			break;
 		}
-		case EncodeBuffer: {
+		case DecodeBuffer: {
 			wchar_t code[256];
 			swprintf_s(code, s.COutPacketEncodeBufferGenCode.c_str(), format.GetSize());
 			line = code;

@@ -28,6 +28,7 @@ struct PacketInfo {
 	uint32_t PID;
 	uint32_t Index;
 	bool IsInPacket;
+	uint16_t Opcode;
 	std::vector<uint8_t> Payload;
 	std::vector<PacketAction> Actions;
 
@@ -35,6 +36,7 @@ struct PacketInfo {
 		PacketScript::Encode4(buffer, PID);
 		PacketScript::Encode4(buffer, Index);
 		PacketScript::Encode1(buffer, IsInPacket);
+		PacketScript::Encode2(buffer, Opcode);
 		PacketScript::Encode4(buffer, static_cast<uint32_t>(Payload.size()));
 		buffer.insert(buffer.end(), Payload.begin(), Payload.end());
 		PacketScript::Encode4(buffer, static_cast<uint32_t>(Actions.size()));
@@ -49,6 +51,7 @@ struct PacketInfo {
 		PID = PacketScript::Decode4(buffer, pos);
 		Index = PacketScript::Decode4(buffer, pos);
 		IsInPacket = PacketScript::Decode1(buffer, pos);
+		Opcode = PacketScript::Decode2(buffer, pos);
 		size_t payloadSize = PacketScript::Decode4(buffer, pos);
 		Payload.assign(buffer.begin() + pos, buffer.begin() + pos + payloadSize);
 		pos += payloadSize;

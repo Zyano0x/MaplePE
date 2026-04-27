@@ -7,8 +7,13 @@ PacketLogModel::PacketLogModel(PacketInfo& info)
 	m_index = info.Index;
 	m_isInPacket = info.IsInPacket;
 	m_length = info.Payload.size();
-	size_t pos = 0;
-	m_opcode = PacketScript::Decode2(info.Payload, pos);
+	if (info.Opcode > 0) {
+		m_opcode = info.Opcode;
+	}
+	else {
+		size_t pos = 0;
+		m_opcode = PacketScript::Decode2(info.Payload, pos);
+	}
 	PacketScript::Buffer2Data(info.Payload, m_data);
 	m_actions.assign(info.Actions.begin(), info.Actions.end());
 }

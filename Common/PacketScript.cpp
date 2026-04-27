@@ -93,11 +93,11 @@ namespace PacketScript {
 		// Valid if epoch, fallback default, or within 21st century range
 		// System Time 0000-00-00 00:00:00 <-> FileTime 1601-01-01 00:00:00 
 		// System Time 0000-00-00 00:00:00 <-> FileTime 1601-01-03 00:37:51
-		// System Time 0001-01-01 00:00:00 <-> FileTime 1754-08-30 22:43:41 
+		// System Time 0001-01-01 00:00:00 <-> FileTime 1754-08-30 22:43:41
 		bool isZeroTime = st.wYear == 1601 && st.wMonth == 1 && st.wDay == 1 && st.wHour == 0 && st.wMinute == 0 && st.wSecond == 0;
 		bool isMinimalTime = st.wYear == 1601 && st.wMonth == 1 && st.wDay == 3 && st.wHour == 0 && st.wMinute == 37 && st.wSecond == 51;
 		bool isFallbackTime = st.wYear == 1754 && st.wMonth == 8 && st.wDay == 30 && st.wHour == 22 && st.wMinute == 43 && st.wSecond == 41;
-		bool isValidTime = st.wYear >= 2000 && st.wYear <= 2100 && st.wMonth >= 1 && st.wMonth <= 12 && st.wDay >= 1 && st.wDay <= 31;
+		bool isValidTime = st.wYear >= 1970 && st.wYear <= 3000 && st.wMonth >= 1 && st.wMonth <= 12 && st.wDay >= 1 && st.wDay <= 31;
 		return isZeroTime || isMinimalTime || isFallbackTime || isValidTime;
 	}
 
@@ -204,7 +204,8 @@ namespace PacketScript {
 			pos += kCharacterNameLength;
 			return wStr;
 		}
-		case kFileTimeLength: {
+		case kLengthEight: {
+			// Decode FT or number
 			uint64_t value = 0;
 			SYSTEMTIME st = DecodeFT(buffer, pos, value);
 			return IsTimeValid(st) ? FormatSystemTime(st) : std::to_wstring(static_cast<int64_t>(value));
@@ -249,15 +250,22 @@ namespace PacketScript {
 		buffer.insert(buffer.end(), p, p + 8);
 	}
 
-	void EncodeFT(std::vector<uint8_t>& buffer, const std::wstring& timeStr) {
+	void EncodeFT(std::vector<uint8_t>& buffer, const std::wstring& data) {
 		FILETIME ft{};
-		SYSTEMTIME st = ParseSystemTime(timeStr);
+		SYSTEMTIME st = ParseSystemTime(data);
 		if (IsTimeValid(st) && SystemTimeToFileTime(&st, &ft)) {
 			uint64_t rawFT = (static_cast<uint64_t>(ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
 			Encode8(buffer, rawFT);
 		}
 		else {
-			Encode8(buffer, 0);
+			std::vector<uint8_t> temp;
+			bool ok = Data2Buffer(data, temp);
+			if (ok) {
+				buffer.insert(buffer.end(), temp.begin(), temp.begin() + 8);
+			}
+			else {
+				Encode8(buffer, 0);
+			}
 		}
 	}
 
@@ -295,7 +303,7 @@ namespace PacketScript {
 			buffer.insert(buffer.end(), p, p + kCharacterNameLength);
 			break;
 		}
-		case kFileTimeLength: {
+		case kLengthEight: {
 			EncodeFT(buffer, data);
 			break;
 		}

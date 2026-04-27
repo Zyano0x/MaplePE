@@ -3,7 +3,7 @@
 #include <ws2tcpip.h>
 #pragma comment(lib, "Ws2_32.lib")
 
-#define RECV_BUF_LEN 8192
+#define RECV_BUF_LEN 65536
 
 static bool InitWSAData() {
 	static bool initialized = [] {

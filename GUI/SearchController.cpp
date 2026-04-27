@@ -4,19 +4,19 @@
 
 namespace {
 	const std::vector<std::wstring> kSearchConditionText = {
-		L"",
+		L"Opcode",
 		L"In",
 		L"Out",
-		L"Opcode",
 		L"Data",
+		L"All",
 	};
 
 	const enum kSearchCondition {
-		Empty,
+		Opcode,
 		In,
 		Out,
-		Opcode,
 		Data,
+		All,
 	};
 
 	static std::wstring searchText2Regex(const std::wstring& data) {
@@ -74,8 +74,10 @@ std::vector<std::pair<int, PacketLogModel>> SearchController::SearchPacketLog(in
 			continue;
 		}
 		switch (condition) {
-		case kSearchCondition::Empty: {
-			result.emplace_back(i, log);
+		case kSearchCondition::Opcode: {
+			if (searchText == log.GetOpcodeStr()) {
+				result.emplace_back(i, log);
+			}
 			break;
 		}
 		case kSearchCondition::In: {
@@ -86,12 +88,6 @@ std::vector<std::pair<int, PacketLogModel>> SearchController::SearchPacketLog(in
 		}
 		case kSearchCondition::Out: {
 			if (log.GetType() == L"Out") {
-				result.emplace_back(i, log);
-			}
-			break;
-		}
-		case kSearchCondition::Opcode: {
-			if (searchText == log.GetOpcodeStr()) {
 				result.emplace_back(i, log);
 			}
 			break;
@@ -110,6 +106,10 @@ std::vector<std::pair<int, PacketLogModel>> SearchController::SearchPacketLog(in
 					this->m_searchView->MBError(err + L"\r\n" + regexStr);
 				}
 			}
+			break;
+		}
+		case kSearchCondition::All: {
+			result.emplace_back(i, log);
 			break;
 		}
 		}

@@ -11,7 +11,7 @@ namespace {
 namespace PacketScript {
 
 	const size_t kCharacterNameLength = 13;
-	const size_t kFileTimeLength = 8;
+	const size_t kLengthEight = 8;
 
 	void InitHexStream(std::wstringstream& ss);
 
@@ -61,7 +61,7 @@ namespace PacketScript {
 
 	void Encode8(std::vector<uint8_t>& buffer, uint64_t value);
 
-	void EncodeFT(std::vector<uint8_t>& buffer, const std::wstring& timeStr);
+	void EncodeFT(std::vector<uint8_t>& buffer, const std::wstring& data);
 
 	void EncodeStr(std::vector<uint8_t>& buffer, const std::wstring& wstr, size_t& uSize);
 

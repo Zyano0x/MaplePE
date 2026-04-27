@@ -35,6 +35,8 @@ namespace COutPacket {
 
 	bool IsFilterOpcode(uint16_t opcode);
 
+	uint16_t GetOpcode(void* key);
+
 	std::vector<PacketAction>* GetActions(void* key);
 
 	void DeleteActions(void* key);

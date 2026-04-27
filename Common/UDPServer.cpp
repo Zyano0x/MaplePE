@@ -1,8 +1,6 @@
 #include "UDPServer.h"
 #include "WSAData.h"
 
-#define RECV_BUF_LEN 8192
-
 UDPServer::UDPServer()
 {
 	m_name = L"UDPServer";

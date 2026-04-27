@@ -8,6 +8,8 @@ namespace {
 
 	static std::map<void*, std::vector<PacketAction>> gActionsMap;
 
+	static std::map<void*, uint16_t> gOpcodeMap;
+
 	static bool IsPayload(void* ecx) {
 		OutPacket* oPacket = static_cast<OutPacket*>(ecx);
 		return oPacket->m_uOffset > 0;
@@ -45,7 +47,17 @@ namespace COutPacket {
 		return gFilterOpcodeSet.find(opcode) != gFilterOpcodeSet.end();
 	}
 
-	std::vector<PacketAction>* GetActions(void* key) {
+	uint16_t GetOpcode(void* key)
+	{
+		auto it = gOpcodeMap.find(key);
+		if (it == gOpcodeMap.end()) {
+			return 0;
+		}
+		return it->second;
+	}
+
+	std::vector<PacketAction>* GetActions(void* key)
+	{
 		auto it = gActionsMap.find(key);
 		if (it == gActionsMap.end()) {
 			return nullptr;
@@ -75,6 +87,7 @@ namespace COutPacket {
 			}
 			else {
 				gActionsMap[ecx] = std::vector<PacketAction>{ action };
+				gOpcodeMap[ecx] = n;
 			}
 		}
 		else if (!actions->empty()) {
@@ -94,6 +107,7 @@ namespace COutPacket {
 			}
 			else {
 				gActionsMap[ecx] = std::vector<PacketAction>{ action };
+				gOpcodeMap[ecx] = n;
 			}
 		}
 		else if (!actions->empty()) {
@@ -155,6 +169,7 @@ namespace COutPacket {
 			info.PID = Router::kPID;
 			info.Index = Router::gPacketIndex++;
 			info.IsInPacket = false;
+			info.Opcode = GetOpcode(ecx);
 			info.Payload = std::vector<uint8_t>(oPacket->m_aSendBuff, oPacket->m_aSendBuff + oPacket->m_uOffset);
 			info.Actions = *actions;
 			Router::SendPacketInfo(info);

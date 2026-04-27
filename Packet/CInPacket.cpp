@@ -7,6 +7,8 @@ namespace {
 
 	static std::map<void*, std::vector<PacketAction>> gActionsMap;
 
+	static std::map<void*, uint16_t> gOpcodeMap;
+
 	static bool IsPayload(void* ecx) {
 		InPacket* iPacket = static_cast<InPacket*>(ecx);
 		return iPacket->m_nState == 2;
@@ -45,6 +47,15 @@ namespace CInPacket {
 		return gFilterOpcodeSet.find(opcode) != gFilterOpcodeSet.end();
 	}
 
+	uint16_t GetOpcode(void* key)
+	{
+		auto it = gOpcodeMap.find(key);
+		if (it == gOpcodeMap.end()) {
+			return 0;
+		}
+		return it->second;
+	}
+
 	std::vector<PacketAction>* GetActions(void* key)
 	{
 		auto it = gActionsMap.find(key);
@@ -71,6 +82,7 @@ namespace CInPacket {
 				}
 				else {
 					gActionsMap[ecx] = std::vector<PacketAction>{ action };
+					gOpcodeMap[ecx] = result;
 				}
 			}
 			else if (!actions->empty()) {
@@ -93,6 +105,7 @@ namespace CInPacket {
 				}
 				else {
 					gActionsMap[ecx] = std::vector<PacketAction>{ action };
+					gOpcodeMap[ecx] = result;
 				}
 			}
 			else if (!actions->empty()) {

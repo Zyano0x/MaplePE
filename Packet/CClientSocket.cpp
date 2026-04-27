@@ -19,6 +19,7 @@ namespace CClientSocket {
 			info.PID = Router::kPID;
 			info.Index = Router::gPacketIndex++;
 			info.IsInPacket = true;
+			info.Opcode = CInPacket::GetOpcode(packet);
 			info.Payload = std::vector<uint8_t>(iPacket->m_aRecvBuff + Router::kHeaderLength, iPacket->m_aRecvBuff + iPacket->m_uLength);
 			info.Actions = *actions;
 			Router::SendPacketInfo(info);

@@ -5,9 +5,6 @@
 MainController::MainController(MainView* view) {
 	m_mainView = view;
 	m_exeDir = GetExecutableDir(NULL);
-	m_GUIServer = new GUIServer(this);
-	m_GUIServer->Run();
-
 	bool loadOK = LoadSetting(m_exeDir, m_setting);
 	if (!loadOK) {
 		bool saveOK = SaveSetting(m_exeDir, m_setting);
@@ -15,6 +12,8 @@ MainController::MainController(MainView* view) {
 			m_mainView->MBError(L"Failed to save setting on first load");
 		}
 	}
+	m_GUIServer = new GUIServer(this);
+	m_GUIServer->Run();
 }
 
 MainController::~MainController()
